@@ -1,12 +1,9 @@
 const start = $('.start');
 const content = $('.content');
+const input = $('.input');
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-
-console.log(recognition);
-
-const res = [{
+const res = [
+	{
 		keywords: 'how are you'.split(' '),
 		res: ['I\'am fine.', 'Not bad']
 	},{
@@ -16,33 +13,14 @@ const res = [{
 		keywords: ['good night'],
 		res: ['good night', 'Have a good dream']
 	},{
-		keywords: 'ok google',
+		keywords: ['ok google'],
 		res: ['I live in google chrome, but I am not google assistant', 'does google assistant looks like me?', 'my pleasure']
 	},{
-		keywords: 'what is your age',
+		keywords: ['what is your age'],
 		res: ['In fact, I\'m born last sunday', 'I cannot tell you']
 	}
 ]
 
-recognition.lang = 'en-US';
-
-recognition.onstart = () => {
-	console.log('voice is activated, you can to microphone');
-};
-
-recognition.onresult = (event) => {
-	console.log(event);
-	const result = event.results[0][0].transcript;
-	console.log(result);
-	let text = response(result);
-	content.append('<p>you said: ' + result + '</P>' );
-	content.append('<p>this page said: ' + text + '</p>')
-	readOutLoud(text);
-};
-
-start.click(()=>{
-	recognition.start();
-});
 
 function response(msg){
 	rate = new Array;
@@ -50,7 +28,9 @@ function response(msg){
 		let count = 0;
 		
 		let that = res[i].keywords;
+		console.log(`${i} ${that}`);
 		for(let j in that){
+			console.log(`\t${that[j]}`)
 			if(msg.includes(that[j])){
 				count ++;
 			}
@@ -77,6 +57,18 @@ function response(msg){
 	let finalIndex = Math.random() * res_.length;
 	return res_[Math.floor(finalIndex)];
 }
+
+function say(author, text){
+	content.append(`<p>${author} said: ${text}`);
+}
+
+start.click(()=>{
+	let text = input.val();
+	say('you', text);
+	let pageSaid = response(text);
+	say('this page', pageSaid);
+	readOutLoud(pageSaid);
+});
 
 function readOutLoud(msg){
 	const speech = new SpeechSynthesisUtterance();
