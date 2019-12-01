@@ -88,7 +88,7 @@ function readOutLoud(msg){
 	speech.text = msg;
 	speech.volume = 1;
 	speech.rate = 1;
-	speech.pitch = 0.1;
+	speech.pitch = 1;
 	speech.lang = 'en-US';
 
 	console.log(speech);
