@@ -2,9 +2,10 @@ const start = $('.start');
 const content = $('.content');
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(!SpeechRecognition){
+	content.append('<p>your browser doesn\'t support SpeechRecognition, please switch google chrome</p>');
+}
 const recognition = new SpeechRecognition();
-
-console.log(recognition);
 
 const res = [{
 		keywords: 'how are you'.split(' '),
@@ -21,6 +22,9 @@ const res = [{
 	},{
 		keywords: 'what is your age',
 		res: ['In fact, I\'m born last sunday', 'I cannot tell you']
+	},{
+		keywords: 'hello',
+		res: ['hello, what can I help you?']
 	}
 ]
 
@@ -45,7 +49,7 @@ start.click(()=>{
 });
 
 function response(msg){
-	rate = new Array;
+	rate = [];
 	for(let i in res){
 		let count = 0;
 		
@@ -66,6 +70,7 @@ function response(msg){
 	if(rate.filter(function(item){return item >= 0.5}).length == 0){
 		return 'sorry, I cannot understand what you said';
 	}
+
 	let max = 0;
 
 	for(let i in rate){
@@ -83,7 +88,7 @@ function readOutLoud(msg){
 	speech.text = msg;
 	speech.volume = 1;
 	speech.rate = 1;
-	speech.pitch = 1;
+	speech.pitch = 0.1;
 	speech.lang = 'en-US';
 
 	console.log(speech);
