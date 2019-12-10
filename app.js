@@ -1,16 +1,33 @@
-const start = $('.start');
-const content = $('.content');
+const start = $('#start');
+const content = $('#content');
 
+// reaction
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if(!SpeechRecognition){
 	content.append('<p>your browser doesn\'t support SpeechRecognition, please switch google chrome</p>');
 }
 const recognition = new SpeechRecognition();
 
-// reaction
+recognition.lang = 'en-US';
+
+recognition.onresult = (event) => {
+	console.log(event);
+	const result = event.results[0][0].transcript;
+	console.log(result);
+	let text = getResponse(result);
+	content.append('<p>you said: ' + result + '</P>' );
+	content.append('<p>this page said: ' + text + '</p>')
+	readOutLoud(text);
+};
+
+start.click(recognition.start);
+
+// respnose
 const response = [];
 function addReaction(req, res){
-	var index = response.findIndex((item)=>item.keywords === req);
+	var index = response.findIndex(function(index){
+		return item.keywords === req
+	});
 	
 	if(index === -1){
 		//add a new reaction
@@ -34,25 +51,6 @@ addReaction('how are you', 'Not bad');
 addReaction('good night', 'Good noght');
 addReaction('good night', 'Have a nice dream');
 
-recognition.lang = 'en-US';
-
-recognition.onstart = () => {
-	console.log('voice is activated, you can to microphone');
-};
-
-recognition.onresult = (event) => {
-	console.log(event);
-	const result = event.results[0][0].transcript;
-	console.log(result);
-	let text = getResponse(result);
-	content.append('<p>you said: ' + result + '</P>' );
-	content.append('<p>this page said: ' + text + '</p>')
-	readOutLoud(text);
-};
-
-start.click(()=>{
-	recognition.start();
-});
 
 function getResponse(msg){
 	msg = msg.toLowerCase();
